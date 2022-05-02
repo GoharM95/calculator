@@ -5,7 +5,6 @@ const App = () => {
   const [operand1, setOperand1] = useState("");
   const [operator, setOperator] = useState("");
   const [operand2, setOperand2] = useState("");
-  const [result, setResult] = useState("");
 
   const renderDigits = () => {
     const digits = [];
@@ -20,38 +19,28 @@ const App = () => {
   };
 
   const handleNumberBtnClick = (e) => {
-    if (!operand1) {
+    if (!operator) {
       setOperand1((operand1) => operand1 + e.target.innerText);
-    }
-    if (operator) {
+    } else {
       setOperand2((operand2) => operand2 + e.target.innerText);
     }
   };
 
   const handleOperetorBtnClick = (e) => {
-    // console.log("operand1", operand1);
-    if (result) {
-      setOperand1(result);
+    if (operand1 || (operand1 && operator)) {
+      setOperator(e.target.innerText);
     }
 
-    if (operator) {
-      setOperator(e.target.innerText);
-    }
-    if (operand1) {
-      setOperator(e.target.innerText);
-    }
-    //  else if (operand1 && operator) {
-    //   setOperator(e.target.innerText);
-    // }
     if (operand1 && operator && operand2) {
-      setResult(equals(operator, operand1, operand2));
+      setOperand1(equals(operator, operand1, operand2));
+      setOperand2("");
     } else {
       return;
     }
   };
 
   const handlePeriodBtnClick = (e) => {
-    if (!operand1 || operand1.includes(".")) {
+    if (!operand1 || (operand1.includes(".") && !operand2)) {
       return;
     } else {
       setOperand1((operand1) => operand1 + e.target.innerText);
@@ -65,14 +54,33 @@ const App = () => {
   };
 
   const handleEqualBtnClick = () => {
-    // console.log("operand1", operand1);
-    // console.log("result", result);
     if (operator && operand1 && operand2) {
-      setResult(equals(operator, operand1, operand2));
-      // setOperand1(result);
+      setOperand1(equals(operator, operand1, operand2));
+      setOperand2("");
     } else {
       return;
     }
+  };
+
+  const percentage = (percent, total) => {
+    return ((percent / 100) * total).toFixed(2);
+  };
+
+  const handleBackspaceBtnClick = () => {
+    if (operand1 && !operand2) {
+      const slicedOperand1 = operand1.slice(0, -1);
+      setOperand1(slicedOperand1);
+    }
+
+    if (operand2) {
+      const slicedOperand2 = operand2.slice(0, -1);
+      setOperand2(slicedOperand2);
+    }
+  };
+
+  const handleClearInputBtnClick = () => {
+    setOperand1("");
+    setOperand2("");
   };
 
   const equals = (operator, operand1, operand2) => {
@@ -81,17 +89,17 @@ const App = () => {
       case "/":
         result = String(parseFloat(operand1) / parseFloat(operand2));
         break;
-
       case "x":
         result = String(parseFloat(operand1) * parseFloat(operand2));
         break;
-
       case "+":
         result = String(parseFloat(operand1) + parseFloat(operand2));
         break;
-
       case "-":
         result = String(parseFloat(operand1) - parseFloat(operand2));
+        break;
+      case "%":
+        result = percentage(operand1, operand2);
         break;
       default:
         return;
@@ -104,8 +112,9 @@ const App = () => {
         <input
           placeholder="0"
           type="text"
-          value={result}
-          //  onChange={result}
+          value={(!operand2 && operand1) || (operand1 && operand2)}
+          // value={!operand2 ? operand1 : operand2}
+          // onChange={}
         />
       </div>
       <div className="operators">
@@ -119,6 +128,9 @@ const App = () => {
         <button onClick={handleNumberBtnClick}>0</button>
         <button onClick={handlePeriodBtnClick}>.</button>
         <button onClick={handleEqualBtnClick}>=</button>
+        <button onClick={handleClearInputBtnClick}>AC</button>
+        <button onClick={handleBackspaceBtnClick}>C</button>
+        <button onClick={handleOperetorBtnClick}>%</button>
       </div>
     </div>
   );
