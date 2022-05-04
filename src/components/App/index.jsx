@@ -67,20 +67,19 @@ const App = () => {
   };
 
   const handleBackspaceBtnClick = () => {
-    if (operand1 && !operand2) {
-      const slicedOperand1 = operand1.slice(0, -1);
-      setOperand1(slicedOperand1);
-    }
-
     if (operand2) {
       const slicedOperand2 = operand2.slice(0, -1);
       setOperand2(slicedOperand2);
     }
+
+    const slicedOperand1 = operand1.slice(0, -1);
+    setOperand1(slicedOperand1);
   };
 
   const handleClearInputBtnClick = () => {
     setOperand1("");
     setOperand2("");
+    setOperator("");
   };
 
   const equals = (operator, operand1, operand2) => {
@@ -109,13 +108,10 @@ const App = () => {
   return (
     <div className="container">
       <div className="display">
-        <input
-          placeholder="0"
-          type="text"
-          value={(!operand2 && operand1) || (operand1 && operand2)}
-          // value={!operand2 ? operand1 : operand2}
-          // onChange={}
-        />
+        <div className="input">
+          {/*{!operand2 ? operand1 : operand2} */}
+          {operand2 || operand1}
+        </div>
       </div>
       <div className="operators">
         <button onClick={handleOperetorBtnClick}>+</button>
